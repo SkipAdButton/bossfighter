@@ -1,0 +1,65 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: monospace;
+    user-select: none;
+    text-align: center;
+}
+body {
+    background-color: #333334;
+}
+#canvas {
+    position: absolute;
+    top: calc(50vh - 384px);
+    left: calc(50vw - 680px);
+}
+#menu {
+    position: absolute;
+    width: 1360px;
+    height: 768px;
+    top: calc(50vh - 384px);
+    left: calc(50vw - 680px);
+    background-image: linear-gradient(to bottom right, #5B7EAA, #E84D41 150%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+#startScreen{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    gap: 25px;
+}
+#startScreen h1{
+    color: white;
+    font-size: 90px;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+#startScreen h2{
+    color: white;
+    font-size: 75px;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    font-style: italic;
+}
+#startScreen h3{
+    color: white;
+    text-decoration: underline;
+}
+#startScreen h4{
+    color: white;
+    font-style: italic;
+    font-size: 40px;
+}
+#startScreen h2:hover{
+    text-decoration: underline;
+}
+#startScreen h4:hover{
+    text-decoration: underline;
+}
+.hide{
+    visibility: hidden;
+}
