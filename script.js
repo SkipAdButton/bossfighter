@@ -105,7 +105,7 @@ class Rico {
                 for (let i = 0; i < Math.PI * 2; i += .1) {
                     projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 600, 10))
                 }
-                if (this.health <= this.maxHealth / 2) {    
+                if (this.health <= this.maxHealth / 2) {
                     for (let i = 0; i < Math.PI * 2; i += .5) {
                         projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 400, 10))
                     }
@@ -180,12 +180,12 @@ class Wizard {
     attack(delta) {
         if (this.health > 0) {
             if (this.lastShot < 0) {
-                projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI/2, Math.random() * 500 + 100, 10))
-                projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI/2, Math.random() * 500 + 100, 10))
+                projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI / 2, Math.random() * 500 + 100, 10))
+                projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI / 2, Math.random() * 500 + 100, 10))
                 if (this.health <= this.maxHealth / 2) {
-                    projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI/2, Math.random() * 500 + 100, 10))
-                    projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI/2, Math.random() * 500 + 100, 10))
-                    projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI/2, Math.random() * 500 + 100, 10))
+                    projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI / 2, Math.random() * 500 + 100, 10))
+                    projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI / 2, Math.random() * 500 + 100, 10))
+                    projectiles.push(new Projectile(Math.random() * canvas.width, 10, Math.PI / 2, Math.random() * 500 + 100, 10))
                 }
                 this.lastShot = this.fireRate
             } else {
@@ -234,7 +234,7 @@ class King {
                 this.lastShot -= delta
             }
         }
-        
+
     }
 }
 
@@ -252,23 +252,33 @@ const bossList = [
 ]
 const keys = {}
 const player = new Player(0, 400)
-const gameState = {
-    started: false,
-}
 const projectiles = []
 const diamonds = []
 const particles = []
+
+const enableSound = new Audio("audio/enableSound.mp3")
+const playerDeathSound = new Audio("audio/playerDeathSound.mp3")
+const playerDashSound = new Audio("audio/playerDashSound.mp3")
+const bossHurtSound = new Audio("audio/bossHurtSound.mp3")
+const bossDeathSound = new Audio("audio/bossDeathSound.mp3")
 // Vars
 let lastTime = 0; // time on last frame
-let currentBoss
-let selectedBoss = 0
+let currentBoss;
+let selectedBoss = 0;
+let globalOffsetX = 0;
+let globalOffsetY = 0;
 
 // Event Listeners
 document.addEventListener("keydown", (e) => {
     keys[e.key.toLowerCase()] = true;
+
 });
 document.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
+}); // Allows Audio
+document.addEventListener("click", (e) => {
+    enableSound.play()
+    enableSound.pause()
 });
 
 // Menu
@@ -306,7 +316,8 @@ function end() {
         currentBoss = und
     }, 1500)
 }
-// Screen Draw
+
+// Screen Draw 
 function draw() {
     // Reset
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -315,23 +326,23 @@ function draw() {
     // Particles
     for (let i = 0; i < particles.length; i++) {
         ctx.fillStyle = particles[i].color
-        ctx.fillRect(particles[i].x, particles[i].y, particles[i].size, particles[i].size)
+        ctx.fillRect(particles[i].x + globalOffsetX, particles[i].y + globalOffsetY, particles[i].size, particles[i].size)
     }
     // Player
     if (player.health > 0) {
         ctx.fillStyle = player.color
-        ctx.fillRect(player.x, player.y, 20, 20)
+        ctx.fillRect(player.x + globalOffsetX, player.y + globalOffsetY, 20, 20)
     }
     // Player Dash Meter
     ctx.fillStyle = "#669FB3"
     if (player.dashCoolDown > 0) {
-        ctx.fillRect(player.x + (10 - player.dashCoolDown * 30), player.y - 10, player.dashCoolDown * 60, 5)
+        ctx.fillRect(player.x + (10 - player.dashCoolDown * 30) + globalOffsetX, player.y - 10 + globalOffsetY, player.dashCoolDown * 60, 5)
     }
     // Projectiles 
     for (let i = 0; i < projectiles.length; i++) {
         ctx.fillStyle = currentBoss.color
         ctx.beginPath();
-        ctx.arc(projectiles[i].x, projectiles[i].y, projectiles[i].size, 0, 2 * Math.PI);
+        ctx.arc(projectiles[i].x + globalOffsetX, projectiles[i].y + globalOffsetY, projectiles[i].size, 0, 2 * Math.PI);
         ctx.fill()
     }
     // Diamond
@@ -341,20 +352,17 @@ function draw() {
         ctx.rotate(Math.PI / 4);
 
         ctx.fillStyle = diamonds[i].color;
-        ctx.fillRect(-5, -5, 10, 10);
+        ctx.fillRect(-5 + globalOffsetX, -5 + globalOffsetY, 10, 10);
 
         ctx.restore();
     }
     // Boss
     if (currentBoss != undefined) {
         ctx.fillStyle = currentBoss.color
-        ctx.fillRect(currentBoss.x, currentBoss.y, currentBoss.size, currentBoss.size)
+        ctx.fillRect(currentBoss.x + globalOffsetX, currentBoss.y + globalOffsetY, currentBoss.size, currentBoss.size)
         // Boss Health Bar=
         ctx.fillStyle = diamonds[0].color;
         let barLength = (canvas.width - (20 * (currentBoss.maxHealth + 1))) / currentBoss.maxHealth
-        // for (let i = 0; i < currentBoss.health; i++) {
-        //     ctx.fillRect((20 * (i + 1)) + (barLength * i), 750, barLength, 10)
-        // }
         for (let i = 0; i < currentBoss.maxHealth; i++) {
             if (i + 1 > currentBoss.health) {
                 ctx.fillStyle = "#151517"
@@ -391,7 +399,7 @@ function playerMovement(delta) {
 }
 
 function dash(delta) {
-    if (keys[" "] && player.dashDirX == 0 && player.dashDirY == 0 && player.dashCoolDown <= 0 && player.health > 0) {
+    if (keys[" "] && player.dashDirX == 0 && player.dashDirY == 0 && player.dashCoolDown <= 0 && player.health > 0 && currentBoss != undefined) {
         if (keys.w) player.dashDirY -= 1500
         if (keys.s) player.dashDirY += 1500
         if (keys.a) player.dashDirX -= 1500
@@ -399,6 +407,7 @@ function dash(delta) {
     }
     if (player.dashDirX != 0 || player.dashDirY != 0) {
         player.dashing = true
+        if (playerDashSound.paused) playerDashSound.play()
         if (player.dashFrame < .1) {
             player.x += player.dashDirX * delta
             player.y += player.dashDirY * delta
@@ -421,6 +430,8 @@ function bossCol() {
     if (player.x + 10 > currentBoss.x && player.x + 10 < currentBoss.x + currentBoss.size + 10 && player.y + 10 > currentBoss.y - 10 && player.y + 10 < currentBoss.y + currentBoss.size && player.dashing == false) {
         player.health--
         if (player.health == 0) {
+            shake(7, 30)
+            playerDeathSound.play()
             end()
             for (let i = 0; i < 10; i++) {
                 particles.push(new Particle(player.x + 5, player.y + 5, (Math.random() * Math.PI * 2), 200, .3, 10, "#007BBB"))
@@ -442,9 +453,11 @@ function projectilesMove(delta) {
 }
 function projectileCol() {
     for (let i = 0; i < projectiles.length; i++) {
-        if (player.x + 10 > projectiles[i].x - 10 && player.x + 10 < projectiles[i].x + 10 && player.y + 10 > projectiles[i].y - 10 && player.y + 10 < projectiles[i].y + 10 && player.dashing == false) {
+        if (player.x + 10 > projectiles[i].x - projectiles[i].size && player.x + 10 < projectiles[i].x + projectiles[i].size && player.y + 10 > projectiles[i].y - projectiles[i].size && player.y + 10 < projectiles[i].y + projectiles[i].size && player.dashing == false) {
             player.health--
             if (player.health == 0) {
+                shake(7, 30)
+                playerDeathSound.play()
                 end()
                 for (let i = 0; i < 10; i++) {
                     particles.push(new Particle(player.x + 5, player.y + 5, (Math.random() * Math.PI * 2), 200, .3, 10, "#007BBB"))
@@ -477,8 +490,16 @@ function pickupDiamond() {
             currentBoss.health--
             diamonds.splice(i, 1)
             spawnDiamond()
+            shake(10, 10)
             if (currentBoss.health == 0) {
+                for (let i = 0; i < 120; i++) {
+                    setTimeout((e) => {particles.push(new Particle(currentBoss.x + currentBoss.size/2, currentBoss.y + currentBoss.size/2, (Math.random() * Math.PI * 2), 700, .4, 20, currentBoss.color))}, 10 + (10 * i))
+                }
+                bossDeathSound.play()
+                shake(30, 150)
                 end()
+            } else {
+                bossHurtSound.play()
             }
             break
         }
@@ -497,7 +518,21 @@ function updateParticles(delta) {
     }
 }
 
-
+// Screen Shakes
+function shake(intensity, length) {
+    for (let i = 0; i < length; i++) {
+        setTimeout((e) => {
+            globalOffsetX = 0;
+            globalOffsetY = 0;
+            globalOffsetX = Math.random() * intensity;
+            globalOffsetY = Math.random() * intensity;
+        }, 10 + (10 * i))
+        setTimeout((e) => {
+            globalOffsetX = 0;
+            globalOffsetY = 0;
+        }, 20 + (10 * length))
+    }
+}
 
 // Delta time / Loop functions
 function loop(time) {
