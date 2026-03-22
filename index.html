@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,30 @@
     <link rel="icon" href="favicon.png">
     <script src="script.js" defer></script>
 </head>
+
 <body>
     <canvas id="canvas" width="1360" height="768"></canvas>
-    <div id="menu"><span id="startScreen"><h1>BOSS FIGHTER</h1><h2 onclick="start()">START</h2><div><h3>CHALLENGER</h3><h4 id="bossSelect" onclick="cycleBoss()">CHARGER</h4></div></div></div>
+    <div id="menu">
+        <span id="startScreen">
+            <h1>BOSS FIGHTER</h1>
+            <h2 onclick="start()">START</h2>
+            <h2 onclick="switchScreen()" id="htp">HOW TO PLAY</h2>
+            <div>
+                <h3>CHALLENGER</h3>
+                <h4 id="bossSelect" onclick="cycleBoss()">CHARGER</h4>
+            </div>
+        </span>
+    </div>
+    <div id="htpMenu" class="hide">
+        <span id="htpScreen">
+            <h1>HOW TO PLAY</h1>
+            <h3>Press [WASD] to move</h3>
+            <h3>Press [SPACE] to dash through attacks</h3>
+            <h3>Collect diamonds to attack the boss</h3>
+            <h3>don't get hit</h3>
+            <h2 onclick="switchScreen()">BACK</h2>
+        </span>
+    </div>
 </body>
+
 </html>
