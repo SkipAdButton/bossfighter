@@ -70,7 +70,7 @@ class Charger {
                 projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.PI / -2, 500, 10))
                 if (this.health <= this.maxHealth / 1.5) {
                     projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.PI, 500, 10))
-                    projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), 0, 500, 10))
+                    projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), 0, 500, 7))
                 }
                 this.lastShot = this.fireRate
             } else {
@@ -102,12 +102,15 @@ class Rico {
     attack(delta) {
         if (this.health > 0) {
             if (this.lastShot < 0) {
-                for (let i = 0; i < Math.PI * 2; i += .1) {
+                /* for (let i = 0; i < Math.PI * 2; i += .1) {
                     projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 600, 10))
-                }
+                } */
+               for (let i = 0; i < Math.PI * 2; i += Math.PI/30) {
+                        projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 600, 10))
+                    }
                 if (this.health <= this.maxHealth / 2) {
-                    for (let i = 0; i < Math.PI * 2; i += .5) {
-                        projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 400, 10))
+                    for (let i = 0; i < Math.PI * 2; i += Math.PI/10) {
+                        projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 450, 10))
                     }
                 }
                 this.lastShot = this.fireRate
@@ -145,7 +148,7 @@ class Beyblade {
                 if (this.health <= this.maxHealth / 2) {
                     projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.PI + this.spin, 600, 10))
                 }
-                this.spin += .09; // 0.1 originally
+                this.spin += .08; // 0.1 originally
                 if (this.spin > Math.PI) {
                     this.spin == 0
                 }
@@ -246,9 +249,11 @@ const ctx = canvas.getContext("2d")
 const canvasData = canvas.getBoundingClientRect()
 const bossSelect = document.getElementById("bossSelect")
 const startScreen = document.getElementById("startScreen")
+const htpScreen = document.getElementById("htpScreen")
 const menu = document.getElementById("menu")
+const htpMenu = document.getElementById("htpMenu")
 const bossList = [
-    "CHARGER", "RICO", "BEYBLADE", "WIZARD"
+    "CHARGER", "BEYBLADE", "RICO", "WIZARD"
 ]
 const keys = {}
 const player = new Player(0, 400)
@@ -296,9 +301,9 @@ function start() { // IMPORTANT
     if (selectedBoss == 0) {
         spawnBoss(new Charger(10, 225, .1))
     } else if (selectedBoss == 1) {
-        spawnBoss(new Rico(10, 150, 1.8))
-    } else if (selectedBoss == 2) {
         spawnBoss(new Beyblade(10, 170, .02)) // .02 originally
+    } else if (selectedBoss == 2) {
+        spawnBoss(new Rico(10, 150, 1.8))
     } else if (selectedBoss == 3) {
         spawnBoss(new Wizard(10, 120, .2))
     }
@@ -315,6 +320,16 @@ function end() {
         menu.classList.remove("hide")
         currentBoss = und
     }, 1500)
+}
+
+function switchScreen() {
+    if (menu.classList.contains("hide")) {
+        menu.classList.remove("hide")
+        htpMenu.classList.add("hide")
+    } else {
+        menu.classList.add("hide")
+        htpMenu.classList.remove("hide")
+    }
 }
 
 // Screen Draw 
