@@ -105,11 +105,11 @@ class Rico {
                 /* for (let i = 0; i < Math.PI * 2; i += .1) {
                     projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 600, 10))
                 } */
-               for (let i = 0; i < Math.PI * 2; i += Math.PI/30) {
-                        projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 600, 10))
-                    }
+                for (let i = 0; i < Math.PI * 2; i += Math.PI / 30) {
+                    projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 600, 10))
+                }
                 if (this.health <= this.maxHealth / 2) {
-                    for (let i = 0; i < Math.PI * 2; i += Math.PI/10) {
+                    for (let i = 0; i < Math.PI * 2; i += Math.PI / 10) {
                         projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + i, 450, 10))
                     }
                 }
@@ -199,20 +199,22 @@ class Wizard {
 }
 
 class King {
-    constructor(maxHealth, speed, fireRate) {
+    constructor(maxHealth, speed, fireRate, fireRate2) {
+        console.log(fireRate)
+        console.log(fireRate2)
         this.maxHealth = maxHealth;
         this.health = maxHealth
         this.speed = speed;
         this.fireRate = fireRate;
-        this.fireRate2 = fireRate * 2
+        this.fireRate2 = fireRate2
 
-        this.spin = 0
         this.lastShot = fireRate;
-        this.lastShot2 = fireRate * 2;
+        this.lastShot2 = fireRate2;
         this.x = 680 - 32.5
         this.y = 384 - 32.5
-        this.size = 40
-        this.color = "#FFD700"
+        this.size = 70
+        this.color = "#BF40BF"
+        this.random = Math.floor(Math.random() * 4) + 1
     }
     move(delta) {
         if (this.health > 0) {
@@ -224,24 +226,54 @@ class King {
     attack(delta) {
         if (this.health > 0) {
             if (this.lastShot < 0) {
-                projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), this.spin, 600, 10))
-                if (this.health <= this.maxHealth / 2) {
-                    projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.PI + this.spin, 600, 10))
+                this.random = Math.floor(Math.random() * 4) + 1
+                if (this.random == 1) {
+                    for (let i = 0; i <= canvas.width; i += canvas.width / 60) {
+                        projectiles.push(new Projectile(i + canvas.width / 120, 0, Math.PI / 2, 300, 10))
+                    }
+                } else if (this.random == 2) {
+                    for (let i = 0; i <= canvas.width; i += canvas.width / 60) {
+                        projectiles.push(new Projectile(i + canvas.width / 120, canvas.height, Math.PI / -2, 300, 10))
+                    }
+
+                } else if (this.random == 3) {
+                    for (let i = 0; i <= canvas.height; i += canvas.height / 35) {
+                        projectiles.push(new Projectile(canvas.width, i + canvas.height / 70, Math.PI, 300, 10))
+                    }
+
+                } else if (this.random == 4) {
+                    for (let i = 0; i <= canvas.height; i += canvas.height / 35) {
+                        projectiles.push(new Projectile(0, i + canvas.height / 70, Math.PI * 2, 300, 10))
+                    }
                 }
-                this.spin += .1; // 0.1 originally
-                if (this.spin > Math.PI) {
-                    this.spin == 0
+                if (this.health <= this.maxHealth / 2) {
+                    projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)), 600, 15))
                 }
                 this.lastShot = this.fireRate
+                console.log(this.lastShot)
             } else {
                 this.lastShot -= delta
+            }
+            if (this.lastShot2 < 0) {
+                for (let i = 0; i < Math.PI * 2; i += Math.PI * 2 / 5) {
+                    projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), /* Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) */ Math.random() * Math.PI * 2 + i, 200, 10))
+                }
+                if (this.health <= this.maxHealth / 2) {
+                    for (let i = 0; i < Math.PI * 2; i += Math.PI * 2 / 5) {
+                        projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), /* Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) */ Math.random() * Math.PI * 2 + i, 200, 5))
+                    }
+                }
+                this.lastShot2 = this.fireRate2
+            } else {
+                this.lastShot2 -= delta
             }
         }
 
     }
 }
 
-// projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)) + this.spin, 600, 10))
+
+// projectiles.push(new Projectile(this.x + (this.size / 2), this.y + (this.size / 2), Math.atan2(player.y + 10 - this.y - (this.size / 2), player.x + 10 - this.x - (this.size / 2)), 600, 10))
 
 // Consts
 const canvas = document.getElementById("canvas")
@@ -253,7 +285,7 @@ const htpScreen = document.getElementById("htpScreen")
 const menu = document.getElementById("menu")
 const htpMenu = document.getElementById("htpMenu")
 const bossList = [
-    "CHARGER", "BEYBLADE", "RICO", "WIZARD"
+    "CHARGER", "BEYBLADE", "RICO", "WIZARD", "KING"
 ]
 const keys = {}
 const player = new Player(0, 400)
@@ -295,17 +327,25 @@ function cycleBoss() {
         selectedBoss = 0
         bossSelect.textContent = bossList[selectedBoss]
     }
+    menu.className = ""
+    if (selectedBoss < 4) {
+        menu.classList.add("beginner")
+    } else if (selectedBoss < 10) {
+        menu.classList.add("hard")
+    }
 }
 
 function start() { // IMPORTANT
     if (selectedBoss == 0) {
         spawnBoss(new Charger(10, 225, .1))
     } else if (selectedBoss == 1) {
-        spawnBoss(new Beyblade(10, 170, .02)) // .02 originally
+        spawnBoss(new Beyblade(10, 170, .02))
     } else if (selectedBoss == 2) {
         spawnBoss(new Rico(10, 150, 1.8))
     } else if (selectedBoss == 3) {
         spawnBoss(new Wizard(10, 120, .2))
+    } else if (selectedBoss == 4) {
+        spawnBoss(new King(10, 135, 1.5, .5))
     }
     player.health = 1
     player.x = 50
@@ -318,7 +358,7 @@ function end() {
     setTimeout((e) => {
         projectiles.splice(0, projectiles.length)
         menu.classList.remove("hide")
-        currentBoss = und
+        currentBoss = undefined
     }, 1500)
 }
 
@@ -508,7 +548,7 @@ function pickupDiamond() {
             shake(10, 10)
             if (currentBoss.health == 0) {
                 for (let i = 0; i < 120; i++) {
-                    setTimeout((e) => {particles.push(new Particle(currentBoss.x + currentBoss.size/2, currentBoss.y + currentBoss.size/2, (Math.random() * Math.PI * 2), 700, .4, 20, currentBoss.color))}, 10 + (10 * i))
+                    setTimeout((e) => { particles.push(new Particle(currentBoss.x + currentBoss.size / 2, currentBoss.y + currentBoss.size / 2, (Math.random() * Math.PI * 2), 700, .4, 20, currentBoss.color)) }, 10 + (10 * i))
                 }
                 bossDeathSound.play()
                 shake(30, 150)
