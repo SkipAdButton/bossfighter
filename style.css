@@ -26,6 +26,12 @@ body {
     justify-content: center;
     flex-direction: column;
 }
+.beginner {
+    background-image: linear-gradient(135deg, #8A2BE2, #00FF7F) !important;
+}
+.hard {
+    background-image: linear-gradient(135deg, #FFA000, #FF4D00) !important;
+}
 #startScreen{
     display: flex;
     align-items: center;
@@ -79,7 +85,7 @@ body {
     height: 768px;
     top: calc(50vh - 384px);
     left: calc(50vw - 680px);
-    background-image: linear-gradient(90deg, #222277, #00f0ff);
+    background-image: linear-gradient(90deg, #00f0ff, #222277);
     display: flex;
     align-items: center;
     justify-content: center;
