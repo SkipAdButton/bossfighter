@@ -318,7 +318,7 @@ class Starfish {
         }
     }
 }
-class Harbringer {
+class Harbinger {
     constructor(maxHealth, speed, fireRate, fireRate2, fireRate3, fireRate4, fireRate5) {
         this.maxHealth = maxHealth;
         this.health = maxHealth
@@ -466,7 +466,7 @@ const htpMenu = document.getElementById("htpMenu")
 const attemptCounter = document.getElementById("attemptCounter")
 const htpq2 = document.getElementById("htpq2")
 const bossList = [
-    "CHARGER", "BEYBLADE", "STARFISH", "RINGMASTER", "RAINMAN", "TSUNAMI", "HARBRINGER"
+    "CHARGER", "BEYBLADE", "STARFISH", "RINGMASTER", "RAINMAN", "TSUNAMI", "HARBINGER"
 ]
 const keys = {}
 const player = new Player(0, 400)
@@ -542,7 +542,7 @@ function start() { // IMPORTANT
     } else if (selectedBoss == 5) {
         spawnBoss(new Tsunami(10, 135, 1.8, .5))
     } else if (selectedBoss == 6) {
-        spawnBoss(new Harbringer(10, 165, 2, 3, .05, 5, .5))
+        spawnBoss(new Harbinger(1, 165, 2, 3, .05, 5, .5))
     }
     attempts[selectedBoss] += 1
     attemptCounter.innerHTML = attempts[selectedBoss]
