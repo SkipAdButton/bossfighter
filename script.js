@@ -464,6 +464,7 @@ const htpScreen = document.getElementById("htpScreen")
 const menu = document.getElementById("menu")
 const htpMenu = document.getElementById("htpMenu")
 const attemptCounter = document.getElementById("attemptCounter")
+const htpq2 = document.getElementById("htpq2")
 const bossList = [
     "CHARGER", "BEYBLADE", "STARFISH", "RINGMASTER", "RAINMAN", "TSUNAMI", "HARBRINGER"
 ]
@@ -572,6 +573,17 @@ function switchScreen() {
     }
 }
 
+function guide(tab) {
+    if (tab == 1) {
+        htpq2.innerHTML = `[WASD] OR [↑ ↓ ← →] </br></br> TIP: Hold down two directions to move faster`
+    } else if (tab == 2) {
+        htpq2.innerHTML = `[SPACE] </br></br> Dashing provides immunity to attacks while it is active,</br> has a cooldown of .5s </br></br> TIP: Diagonal dashes go farther, the bar over your player tracks dash cooldown`
+    } else if (tab == 3) {
+        htpq2.innerHTML = `Diamonds damage the boss when collected, 10 are needed to defeat a boss, they are your only source of damage </br></br> TIP: Diamonds are unable to spawn near you`
+    } else if (tab == 4) {
+        htpq2.innerHTML = `It is up to you to learn how bosses work, what weakness they have and how you can exploit them </br></br> EXPECT HEAVY RESISTANCE`
+    }
+}
 // Screen Draw 
 function draw() {
     // Reset
