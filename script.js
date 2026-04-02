@@ -39,7 +39,6 @@ class Diamond {
     attack(delta) {
         if (this.fly && currentBoss != undefined) {
             this.angle = Math.atan2(currentBoss.y + currentBoss.size / 2 - this.y + 6, currentBoss.x + currentBoss.size / 2 - this.x + 6)
-            console.log(this.angle)
             this.x += Math.cos(this.angle) * (this.flySpeed * delta)
             this.y += Math.sin(this.angle) * (this.flySpeed * delta)
             this.flySpeed += 10
@@ -49,7 +48,7 @@ class Diamond {
                     currentBoss.health--
                     diamonds.splice(i, 1)
                     if (currentBoss.phase == 1 && currentBoss.health == 0) { } else { spawnDiamond() }
-                    shake(15, 15)
+                    shake(25, 10)
                     if (currentBoss.health == 0) {
                         if (selectedBoss == 6 && currentBoss.phase == 1) {
                             for (let i = 0; i < 120; i++) {
@@ -67,6 +66,7 @@ class Diamond {
                             end()
                         }
                     } else {
+                        bossPulse = 1
                         bossHurtSound.play()
                     }
                 }
@@ -537,7 +537,7 @@ let selectedBoss = 0;
 let globalOffsetX = 0;
 let globalOffsetY = 0;
 
-let bossPulse = 1
+let bossPulse = 0
 
 // Event Listeners
 document.addEventListener("keydown", (e) => {
@@ -670,7 +670,7 @@ function draw() {
     ctx.fillStyle = "#669FB3"
     ctx.strokeStyle = "#669FB3"
     if (player.dashCoolDown > 0) {
-        ctx.fillRect(player.x + (10 - player.dashCoolDown * 50) + globalOffsetX, player.y - 10 + globalOffsetY, player.dashCoolDown * 100, 5)
+        ctx.fillRect(player.x + (10 - 25) + globalOffsetX, player.y - 10 + globalOffsetY, player.dashCoolDown * 100, 5)
         ctx.strokeRect(player.x - 15 + globalOffsetX, player.y - 10 + globalOffsetY, 50, 5)
     }
     // Projectiles 
@@ -702,6 +702,9 @@ function draw() {
         ctx.shadowBlur = currentBoss.size / 3
 
         ctx.fillStyle = currentBoss.color
+        ctx.fillRect(currentBoss.x + globalOffsetX, currentBoss.y + globalOffsetY, currentBoss.size, currentBoss.size)
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${bossPulse})`
         ctx.fillRect(currentBoss.x + globalOffsetX, currentBoss.y + globalOffsetY, currentBoss.size, currentBoss.size)
         // Boss Health Bar=
         ctx.fillStyle = "#dddd33";
@@ -876,6 +879,13 @@ function shake(intensity, length) {
     }
 }
 
+// Pulse Control
+function pulseControl(delta) {
+    if (bossPulse > 0) {
+        bossPulse -= delta * 3;
+    }
+}
+
 // Delta time / Loop functions
 function loop(time) {
 
@@ -887,6 +897,7 @@ function loop(time) {
     projectilesMove(delta)
     updateParticles(delta)
     dash(delta)
+    pulseControl(delta)
     pickupDiamond()
     projectileCol()
     if (currentBoss != undefined) {
