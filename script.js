@@ -35,6 +35,7 @@ class Diamond {
         this.fly = false
         this.flySpeed = -400
         this.color = "#dddd33"
+        this.rotate = Math.PI / 4
     }
     attack(delta) {
         if (this.fly && currentBoss != undefined) {
@@ -42,10 +43,12 @@ class Diamond {
             this.x += Math.cos(this.angle) * (this.flySpeed * delta)
             this.y += Math.sin(this.angle) * (this.flySpeed * delta)
             this.flySpeed += 1200 * delta
+            this.rotate += Math.PI * 3.5 * delta
 
             for (let i = 0; i < diamonds.length; i++) {
                 if (this.x > currentBoss.x && this.x < currentBoss.x + currentBoss.size && this.y > currentBoss.y && this.y < currentBoss.y + currentBoss.size) {
                     currentBoss.health--
+                    bossPulse = 1
                     diamonds.splice(i, 1)
                     if (currentBoss.phase == 1 && currentBoss.health == 0) { } else { spawnDiamond() }
                     shake(25, 10)
@@ -66,7 +69,6 @@ class Diamond {
                             end()
                         }
                     } else {
-                        bossPulse = 1
                         bossHurtSound.play()
                     }
                 }
@@ -538,6 +540,7 @@ let globalOffsetX = 0;
 let globalOffsetY = 0;
 
 let bossPulse = 0
+let playerPulse = 0
 
 // Event Listeners
 document.addEventListener("keydown", (e) => {
@@ -562,13 +565,6 @@ function cycleBoss() {
         bossSelect.textContent = bossList[selectedBoss]
     }
     attemptCounter.innerHTML = attempts[selectedBoss]
-    console.log(attempts)
-    menu.className = ""
-    if (selectedBoss < 6) {
-        menu.classList.add("beginner")
-    } else {
-        menu.classList.add("impossible")
-    }
 }
 
 function start() { // IMPORTANT
@@ -601,6 +597,7 @@ function start() { // IMPORTANT
 function end() {
     setTimeout((e) => {
         projectiles.splice(0, projectiles.length)
+        diamonds.splice(0, diamonds.length)
         menu.classList.remove("hide")
         currentBoss = undefined
     }, 1500)
@@ -656,22 +653,27 @@ function draw() {
         ctx.fillRect(particles[i].x + globalOffsetX, particles[i].y + globalOffsetY, particles[i].size, particles[i].size)
     }
     // Player
-    if (player.health > 0) {
-        ctx.shadowColor = player.color; // glow color
-        ctx.shadowBlur = player.size;
+    if (currentBoss != undefined) {
+        if (player.health > 0) {
+            ctx.shadowColor = player.color; // glow color
+            ctx.shadowBlur = player.size;
 
-        ctx.fillStyle = player.color
-        ctx.fillRect(player.x + globalOffsetX, player.y + globalOffsetY, player.size, player.size)
-    }
-    // Player Dash Meter
-    ctx.shadowColor = "#669FB3"; // glow color
-    ctx.shadowBlur = 10;
+            ctx.fillStyle = player.color
+            ctx.fillRect(player.x + globalOffsetX, player.y + globalOffsetY, player.size, player.size)
 
-    ctx.fillStyle = "#669FB3"
-    ctx.strokeStyle = "#669FB3"
-    if (player.dashCoolDown > 0) {
-        ctx.fillRect(player.x + (10 - 25) + globalOffsetX, player.y - 10 + globalOffsetY, 50 - player.dashCoolDown * 100, 5)
-        ctx.strokeRect(player.x - 15 + globalOffsetX, player.y - 10 + globalOffsetY, 50, 5)
+            ctx.fillStyle = `rgba(255, 255, 255, ${playerPulse})`
+            ctx.fillRect(player.x + globalOffsetX, player.y + globalOffsetY, player.size, player.size)
+            // Player Dash Meter
+            ctx.shadowColor = "#669FB3"; // glow color
+            ctx.shadowBlur = 10;
+
+            ctx.fillStyle = "#669FB3"
+            ctx.strokeStyle = "#669FB3"
+            if (player.dashCoolDown > 0) {
+                ctx.fillRect(player.x + (10 - 25) + globalOffsetX, player.y - 10 + globalOffsetY, 50 - player.dashCoolDown * 100, 5)
+                ctx.strokeRect(player.x - 15 + globalOffsetX, player.y - 10 + globalOffsetY, 50, 5)
+            }
+        }
     }
     // Projectiles 
     for (let i = 0; i < projectiles.length; i++) {
@@ -686,7 +688,7 @@ function draw() {
     for (let i = 0; i < diamonds.length; i++) {
         ctx.save();
         ctx.translate(diamonds[i].x, diamonds[i].y);
-        ctx.rotate(Math.PI / 4);
+        ctx.rotate(diamonds[i].rotate);
 
         ctx.shadowColor = diamonds[i].color; // glow color
         ctx.shadowBlur = 12
@@ -772,6 +774,9 @@ function dash(delta) {
             player.dashDirY = 0
             player.dashFrame = 0
             player.dashCoolDown = .5
+            setTimeout((e) => {
+                playerPulse = 1
+            }, 500)
         }
     }
     if (player.dashCoolDown > 0) player.dashCoolDown -= delta
@@ -883,6 +888,9 @@ function shake(intensity, length) {
 function pulseControl(delta) {
     if (bossPulse > 0) {
         bossPulse -= delta * 3;
+    }
+    if (playerPulse > 0) {
+        playerPulse -= delta * 2;
     }
 }
 
